@@ -10,7 +10,9 @@ const essentialRoutes = require('./routes/essentials');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Reflect the request origin so any frontend (xarajat.vercel.app, localhost, etc.)
+// can call the API. Auth uses a Bearer token in headers, not cookies.
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -21,6 +23,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'Xarajat Statistika API ishlayapti' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server http://localhost:${PORT} da ishlamoqda`);
-});
+// Vercel serverless: export the app. Locally: start a listener.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server http://localhost:${PORT} da ishlamoqda`);
+  });
+}
+
+module.exports = app;
