@@ -22,7 +22,8 @@ const register = async (req, res) => {
       token,
       user: { id: user._id, email: user.email, name: user.name },
     });
-  } catch {
+  } catch (err) {
+    console.error('[register]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -46,18 +47,23 @@ const login = async (req, res) => {
       token,
       user: { id: user._id, email: user.email, name: user.name },
     });
-  } catch {
+  } catch (err) {
+    console.error('[login]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
 
 const me = async (req, res) => {
   try {
+    if (!req.userId.startsWith('user_')) {
+      return res.status(401).json({ error: 'Ro\'yxatdan o\'tgan foydalanuvchi emas' });
+    }
     const userId = req.userId.replace('user_', '');
     const user = await User.findById(userId).select('-password');
     if (!user) return res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
     res.json({ id: user._id, email: user.email, name: user.name });
-  } catch {
+  } catch (err) {
+    console.error('[me]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };

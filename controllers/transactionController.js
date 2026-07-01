@@ -14,7 +14,8 @@ const getAll = async (req, res) => {
 
     const rows = await Transaction.find(filter).sort({ date: -1, createdAt: -1 });
     res.json(rows);
-  } catch {
+  } catch (err) {
+    console.error('[transactions getAll]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -29,7 +30,8 @@ const getDailySummary = async (req, res) => {
     const expense = rows.filter((r) => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
 
     res.json({ date: targetDate, income, expense, net: income - expense });
-  } catch {
+  } catch (err) {
+    console.error('[transactions getDailySummary]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -58,7 +60,8 @@ const getMonthlySummary = async (req, res) => {
       dailyAvgIncome: daysInMonth > 0 ? income / daysInMonth : 0,
       daysInMonth,
     });
-  } catch {
+  } catch (err) {
+    console.error('[transactions getMonthlySummary]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -80,7 +83,8 @@ const create = async (req, res) => {
       date,
     });
     res.status(201).json(tx);
-  } catch {
+  } catch (err) {
+    console.error('[transactions create]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -91,7 +95,8 @@ const remove = async (req, res) => {
     const tx = await Transaction.findOneAndDelete({ _id: id, userId: req.userId });
     if (!tx) return res.status(404).json({ error: 'Topilmadi' });
     res.json({ message: 'O\'chirildi' });
-  } catch {
+  } catch (err) {
+    console.error('[transactions remove]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };

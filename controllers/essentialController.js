@@ -4,7 +4,8 @@ const getAll = async (req, res) => {
   try {
     const rows = await EssentialExpense.find({ userId: req.userId }).sort({ createdAt: -1 });
     res.json(rows);
-  } catch {
+  } catch (err) {
+    console.error('[essentials getAll]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -21,7 +22,8 @@ const create = async (req, res) => {
       amount: parseFloat(amount),
     });
     res.status(201).json(item);
-  } catch {
+  } catch (err) {
+    console.error('[essentials create]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -40,7 +42,8 @@ const update = async (req, res) => {
     );
     if (!item) return res.status(404).json({ error: 'Topilmadi' });
     res.json(item);
-  } catch {
+  } catch (err) {
+    console.error('[essentials update]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
@@ -51,7 +54,8 @@ const remove = async (req, res) => {
     const item = await EssentialExpense.findOneAndDelete({ _id: id, userId: req.userId });
     if (!item) return res.status(404).json({ error: 'Topilmadi' });
     res.json({ message: 'O\'chirildi' });
-  } catch {
+  } catch (err) {
+    console.error('[essentials remove]', err);
     res.status(500).json({ error: 'Server xatosi' });
   }
 };
