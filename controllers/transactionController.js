@@ -89,6 +89,26 @@ const create = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, amount, description, date } = req.body;
+    if (type && !['income', 'expense'].includes(type)) {
+      return res.status(400).json({ error: 'Tur: income yoki expense bo\'lishi kerak' });
+    }
+    const tx = await Transaction.findOneAndUpdate(
+      { _id: id, userId: req.userId },
+      { ...(type && { type }), ...(amount && { amount: parseFloat(amount) }), ...(description && { description }), ...(date && { date }) },
+      { new: true }
+    );
+    if (!tx) return res.status(404).json({ error: 'Topilmadi' });
+    res.json(tx);
+  } catch (err) {
+    console.error('[transactions update]', err);
+    res.status(500).json({ error: 'Server xatosi' });
+  }
+};
+
 const remove = async (req, res) => {
   try {
     const { id } = req.params;
@@ -101,4 +121,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getDailySummary, getMonthlySummary, create, remove };
+module.exports = { getAll, getDailySummary, getMonthlySummary, create, update, remove };

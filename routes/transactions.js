@@ -8,6 +8,7 @@ router.get('/', ctrl.getAll);
 router.get('/daily', ctrl.getDailySummary);
 router.get('/monthly', ctrl.getMonthlySummary);
 router.post('/', ctrl.create);
+router.put('/:id', ctrl.update);
 router.delete('/:id', ctrl.remove);
 
 module.exports = router;
